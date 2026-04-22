@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ "main" ]
 
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -47,51 +52,58 @@ jobs:
 
       - name: Publish unit test results
         uses: EnricoMi/publish-unit-test-result-action@v2
-        if: always()
+        if: always() && hashFiles('build/test-results/test/*.xml') != ''
         with:
           check_name: Unit tests results
-          files: |
-            build/test-results/test/*.xml
+          files: build/test-results/test/*.xml
+          compare_to_earlier_commit: false
 
       - name: Integration tests
         run: ./gradlew testIntegration
 
       - name: Publish integration test results
         uses: EnricoMi/publish-unit-test-result-action@v2
-        if: always()
+        if: always() && hashFiles('build/test-results/testIntegration/*.xml') != ''
         with:
           check_name: Integration tests results
-          files: |
-            build/test-results/testIntegration/*.xml
+          files: build/test-results/testIntegration/*.xml
+          compare_to_earlier_commit: false
 
       - name: Component tests
         run: ./gradlew testComponent
 
       - name: Publish component test results
         uses: EnricoMi/publish-unit-test-result-action@v2
-        if: always()
+        if: always() && hashFiles('build/test-results/testComponent/*.xml') != ''
         with:
           check_name: Component tests results
-          files: |
-            build/test-results/testComponent/*.xml
+          files: build/test-results/testComponent/*.xml
+          compare_to_earlier_commit: false
 
       - name: Architecture tests
         run: ./gradlew testArchitecture
 
       - name: Publish architecture test results
         uses: EnricoMi/publish-unit-test-result-action@v2
-        if: always()
+        if: always() && hashFiles('build/test-results/testArchitecture/*.xml') != ''
         with:
           check_name: Architecture tests results
-          files: |
-            build/test-results/testArchitecture/*.xml
+          files: build/test-results/testArchitecture/*.xml
+          compare_to_earlier_commit: false
 
       - name: JaCoCo report
         run: ./gradlew jacocoTestReport
 
-      - name: Upload JaCoCo report
-        uses: actions/upload-artifact@v4
+      - name: Upload test results
         if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: build/test-results/
+
+      - name: Upload JaCoCo report
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: jacoco-report
           path: build/reports/jacoco/
@@ -100,8 +112,8 @@ jobs:
         run: ./gradlew pitest
 
       - name: Upload PIT report
-        uses: actions/upload-artifact@v4
         if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: pitest-report
           path: build/reports/pitest/

@@ -132,6 +132,10 @@ kotlin {
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
+    reports {
+        junitXml.required.set(true)
+        html.required.set(true)
+    }
 }
 
 val testIntegration by tasks.creating(Test::class) {
