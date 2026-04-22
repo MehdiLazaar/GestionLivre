@@ -1,10 +1,10 @@
 import info.solidsoft.gradle.pitest.PitestPluginExtension
+import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.creating
-import org.gradle.testing.jacoco.tasks.JacocoReport
-import org.gradle.testing.jacoco.tasks.JacocoCoverageVerification
-import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.language.jvm.tasks.ProcessResources
+import org.gradle.testing.jacoco.tasks.JacocoCoverageVerification
+import org.gradle.testing.jacoco.tasks.JacocoReport
 
 plugins {
     kotlin("jvm") version "1.9.25"
@@ -31,22 +31,22 @@ repositories {
 
 sourceSets {
     create("testIntegration") {
-        kotlin.srcDir("src/testIntegration/kotlin")
-        resources.srcDir("src/testIntegration/resources")
+        kotlin.srcDirs("src/testIntegration/kotlin")
+        resources.setSrcDirs(listOf("src/testIntegration/resources"))
         compileClasspath += sourceSets["main"].output + configurations["testRuntimeClasspath"]
         runtimeClasspath += output + compileClasspath
     }
 
     create("testComponent") {
-        kotlin.srcDir("src/testComponent/kotlin")
-        resources.srcDir("src/testComponent/resources")
+        kotlin.srcDirs("src/testComponent/kotlin")
+        resources.setSrcDirs(listOf("src/testComponent/resources"))
         compileClasspath += sourceSets["main"].output + configurations["testRuntimeClasspath"]
         runtimeClasspath += output + compileClasspath
     }
 
     create("testArchitecture") {
-        kotlin.srcDir("src/testArchitecture/kotlin")
-        resources.srcDir("src/testArchitecture/resources")
+        kotlin.srcDirs("src/testArchitecture/kotlin")
+        resources.setSrcDirs(listOf("src/testArchitecture/resources"))
         compileClasspath += sourceSets["main"].output + configurations["testRuntimeClasspath"]
         runtimeClasspath += output + compileClasspath
     }
@@ -277,6 +277,15 @@ tasks.named("check") {
         tasks.named("detekt")
     )
 }
+
 tasks.named<ProcessResources>("processTestIntegrationResources") {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.named<ProcessResources>("processTestComponentResources") {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.named<ProcessResources>("processTestArchitectureResources") {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

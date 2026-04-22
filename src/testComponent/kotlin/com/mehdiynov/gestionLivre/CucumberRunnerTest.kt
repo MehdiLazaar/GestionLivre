@@ -29,9 +29,9 @@ class CucumberRunnerTest {
         @JvmStatic
         @DynamicPropertySource
         fun overrideProps(registry: DynamicPropertyRegistry) {
-            registry.add("spring.datasource.username") { container.username }
-            registry.add("spring.datasource.password") { container.password }
-            registry.add("spring.datasource.url") { container.jdbcUrl }
+            registry.add("spring.datasource.url", container::getJdbcUrl)
+            registry.add("spring.datasource.username", container::getUsername)
+            registry.add("spring.datasource.password", container::getPassword)
         }
     }
 }
