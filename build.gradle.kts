@@ -3,6 +3,8 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.creating
 import org.gradle.testing.jacoco.tasks.JacocoReport
 import org.gradle.testing.jacoco.tasks.JacocoCoverageVerification
+import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.language.jvm.tasks.ProcessResources
 
 plugins {
     kotlin("jvm") version "1.9.25"
@@ -274,4 +276,7 @@ tasks.named("check") {
         tasks.named("jacocoTestCoverageVerification"),
         tasks.named("detekt")
     )
+}
+tasks.named<ProcessResources>("processTestIntegrationResources") {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

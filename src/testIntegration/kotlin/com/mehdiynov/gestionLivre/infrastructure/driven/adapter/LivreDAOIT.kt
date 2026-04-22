@@ -5,18 +5,18 @@ import com.mehdiynov.gestionLivre.domain.usecase.AjoutLivreUsecase
 import com.mehdiynov.gestionLivre.domain.usecase.ListeLivreUsecase
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.FunSpec
+import io.kotest.extensions.spring.SpringExtension
 import io.mockk.every
 import io.mockk.justRun
 import io.mockk.verify
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.http.MediaType.APPLICATION_JSON
-import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 
 @WebMvcTest(BookController::class)
-class LivreDAOIT(
+class BookControllerIT(
     @MockkBean private val ajoutLivreUsecase: AjoutLivreUsecase,
     @MockkBean private val listeLivreUsecase: ListeLivreUsecase,
     private val mockMvc: MockMvc
@@ -69,13 +69,13 @@ class LivreDAOIT(
         }
     }
 
-    test("rest route post book should return 400 when body is not good") {
+    test("rest route post book should return 400 when titre is blank") {
         justRun { ajoutLivreUsecase.execute(any(), any()) }
 
         mockMvc.post("/books") {
             content = """
                 {
-                  "title": "Les Misérables",
+                  "titre": "",
                   "auteur": "Victor Hugo"
                 }
             """.trimIndent()
