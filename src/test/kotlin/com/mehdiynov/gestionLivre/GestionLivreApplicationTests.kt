@@ -3,11 +3,9 @@ package com.mehdiynov.gestionLivre
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 
-@SpringBootTest
+
 class GestionLivreApplicationTests {
 
-	@Test
-	fun contextLoads() {
-	}
-
+    @Test
+    fun contextLoads() = Unit
 }

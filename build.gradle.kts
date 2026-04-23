@@ -7,13 +7,13 @@ import org.gradle.testing.jacoco.tasks.JacocoCoverageVerification
 import org.gradle.testing.jacoco.tasks.JacocoReport
 
 plugins {
-    kotlin("jvm") version "1.9.25"
-    kotlin("plugin.spring") version "1.9.25"
+    kotlin("jvm") version "1.9.23"
+    kotlin("plugin.spring") version "1.9.23"
     id("org.springframework.boot") version "3.3.5"
     id("io.spring.dependency-management") version "1.1.7"
     jacoco
     id("info.solidsoft.pitest") version "1.15.0"
-    id("io.gitlab.arturbosch.detekt") version "1.23.8"
+    id("io.gitlab.arturbosch.detekt") version "1.23.6"
 }
 
 group = "com.mehdiynov"
@@ -140,7 +140,7 @@ tasks.withType<Test>().configureEach {
     }
 }
 
-val testIntegration by tasks.creating(Test::class) {
+val testIntegration by tasks.registering(Test::class) {
     description = "Runs integration tests."
     group = "verification"
     testClassesDirs = sourceSets["testIntegration"].output.classesDirs
@@ -149,7 +149,7 @@ val testIntegration by tasks.creating(Test::class) {
     useJUnitPlatform()
 }
 
-val testComponent by tasks.creating(Test::class) {
+val testComponent by tasks.registering(Test::class) {
     description = "Runs component tests."
     group = "verification"
     testClassesDirs = sourceSets["testComponent"].output.classesDirs
@@ -158,7 +158,7 @@ val testComponent by tasks.creating(Test::class) {
     useJUnitPlatform()
 }
 
-val testArchitecture by tasks.creating(Test::class) {
+val testArchitecture by tasks.registering(Test::class) {
     description = "Runs architecture tests."
     group = "verification"
     testClassesDirs = sourceSets["testArchitecture"].output.classesDirs

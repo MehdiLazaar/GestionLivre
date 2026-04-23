@@ -7,5 +7,6 @@ import org.springframework.boot.runApplication
 class GestionLivreApplication
 
 fun main(args: Array<String>) {
-	runApplication<GestionLivreApplication>(*args)
+	runApplication<GestionLivreApplication>(args = args)
 }
+
