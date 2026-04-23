@@ -90,7 +90,7 @@ dependencies {
     testImplementation("io.kotest:kotest-property:5.9.1")
     testImplementation("io.kotest:kotest-runner-junit5:5.9.1")
     testImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")
-    testImplementation("io.kotest.extensions:kotest-extensions-pitest:1.2.0")
+    pitest("io.kotest.extensions:kotest-extensions-pitest:1.2.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(module = "mockito-core")
     }
@@ -240,15 +240,11 @@ tasks.named<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
 
 pitest {
     junit5PluginVersion.set("1.2.1")
-    targetClasses.set(listOf("com.mehdiynov.gestionLivre.*"))
-    threads.set(2)
-    outputFormats.set(listOf("HTML"))
-    timestampedReports.set(false)
-    excludedClasses.set(listOf("*.Companion*", "*.Config*"))
-    excludedTestClasses.set(listOf("com.mehdiynov.gestionLivre.GestionLivreApplicationTests"))
-    mutators.set(listOf("STRONGER"))
-    mainSourceSets.addAll(sourceSets.main.get())
-    testSourceSets.addAll(sourceSets.test.get())
+    targetClasses = setOf("com.mehdiynov.gestionLivre.domain.*")
+    targetTests = setOf("com.mehdiynov.gestionLivre.domain.*")
+
+    outputFormats = setOf("HTML", "XML")
+    mutationThreshold = 0
 }
 
 detekt {
