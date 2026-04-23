@@ -1,71 +1,101 @@
 package com.mehdiynov.gestionLivre
 
 import io.cucumber.java.Before
-import io.cucumber.java.Scenario
+import io.cucumber.java.en.And
+import io.cucumber.java.en.Given
 import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 import io.kotest.matchers.shouldBe
 import io.restassured.RestAssured
-import io.restassured.RestAssured.given
 import io.restassured.http.ContentType
-import io.restassured.path.json.JsonPath
 import io.restassured.response.ValidatableResponse
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 
 class BookStepDefs {
+
     @LocalServerPort
-    private var port: Int? = 0
+    private var port: Int = 0
+
+    @Autowired
+    lateinit var jdbcTemplate: NamedParameterJdbcTemplate
+
+    private lateinit var lastResponse: ValidatableResponse
 
     @Before
-    fun setup(scenario: Scenario) {
+    fun setup() {
         RestAssured.baseURI = "http://localhost:$port"
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails()
+        jdbcTemplate.update("DELETE FROM livre", MapSqlParameterSource())
     }
 
-    @When("the user creates the book {string} written by {string}")
+    @Given("the user creates the book {string} written by {string}")
     fun createBook(titre: String, auteur: String) {
-        given()
+        lastResponse = RestAssured
+            .given()
             .contentType(ContentType.JSON)
-            .and()
             .body(
                 """
-                    {
-                      "titre": "$titre",
-                      "auteur": "$auteur"
-                    }
+                {
+                  "titre": "$titre",
+                  "auteur": "$auteur"
+                }
                 """.trimIndent()
             )
             .`when`()
             .post("/books")
             .then()
-            .statusCode(201)
     }
 
-    @When("the user get all books")
+    @When("the user reserves the book {string} written by {string}")
+    fun reserveBook(titre: String, auteur: String) {
+        lastResponse = RestAssured
+            .given()
+            .contentType(ContentType.JSON)
+            .body(
+                """
+                {
+                  "titre": "$titre",
+                  "auteur": "$auteur"
+                }
+                """.trimIndent()
+            )
+            .`when`()
+            .post("/books/reserve")
+            .then()
+    }
+
+    @When("the user retrieves all books")
     fun getAllBooks() {
-        lastBookResult = given()
+        lastResponse = RestAssured
+            .given()
             .`when`()
             .get("/books")
             .then()
-            .statusCode(200)
     }
 
-    @Then("the list should contains the following books in the same order")
-    fun shouldHaveListOfBooks(payload: List<Map<String, Any>>) {
-        val expectedResponse = payload.joinToString(separator = ",", prefix = "[", postfix = "]") { line ->
-            """
-                ${
-                line.entries.joinToString(separator = ",", prefix = "{", postfix = "}") {
-                    """"${it.key}": "${it.value}""""
-                }
-            }
-            """.trimIndent()
-        }
-
-        lastBookResult.extract().body().jsonPath().prettify() shouldBe JsonPath(expectedResponse).prettify()
+    @Then("the response status should be {int}")
+    fun responseStatusShouldBe(status: Int) {
+        lastResponse.extract().statusCode() shouldBe status
     }
 
-    companion object {
-        lateinit var lastBookResult: ValidatableResponse
+    @And("the response should contain the book {string} written by {string} as unavailable")
+    fun responseShouldContainUnavailableBook(titre: String, auteur: String) {
+        val body = lastResponse.extract().body().jsonPath()
+        val titres = body.getList<String>("titre")
+        val auteurs = body.getList<String>("auteur")
+        val disponibilites = body.getList<Boolean>("disponible")
+
+        val index = titres.indexOf(titre)
+        index shouldBe auteurs.indexOf(auteur)
+        disponibilites[index] shouldBe false
+    }
+
+    @And("the error message should be {string}")
+    fun errorMessageShouldBe(message: String) {
+        val body = lastResponse.extract().body().jsonPath()
+        body.getString("message") shouldBe message
     }
 }

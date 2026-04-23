@@ -1,0 +1,17 @@
+build:
+  maxIssues: 0
+
+style:
+  MagicNumber:
+    active: false
+
+naming:
+  FunctionNaming:
+    active: true
+  VariableNaming:
+    active: true
+
+complexity:
+  LongMethod:
+    active: true
+    threshold: 30

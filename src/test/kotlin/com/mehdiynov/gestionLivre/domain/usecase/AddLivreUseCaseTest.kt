@@ -11,7 +11,7 @@ class AddLivreUseCaseTest : FunSpec({
         val repo = FakeRepositoryLivre()
         val useCase = AjoutLivreUsecase(repo)
 
-        useCase.execute("Clean Code", "Robert Martin")
+        useCase.execute("LivreMehdi", "Robert Martin")
 
         assert(repo.findAll().size == 1)
     }

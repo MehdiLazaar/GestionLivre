@@ -14,4 +14,18 @@ class FakeRepositoryLivre : LivreRepository {
     override fun findAll(): List<Livre> {
         return livres
     }
+
+    override fun findByTitreAndAuteur(
+        titre: String,
+        auteur: String
+    ): Livre? {
+        return livres.find { it.titre == titre && it.auteur == auteur }
+    }
+
+    override fun reserve(titre: String, auteur: String) {
+        val livre = findByTitreAndAuteur(titre, auteur)
+        if (livre != null) {
+            livre.estReserve = true
+        }
+    }
 }

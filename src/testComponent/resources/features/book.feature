@@ -1,9 +1,17 @@
-Feature: the user can create and retrieve the books
-  Scenario: user creates two books and retrieve both of them
-    When the user creates the book "Les Misérables" written by "Victor Hugo"
-    And the user creates the book "L'avare" written by "Molière"
-    And the user get all books
-    Then the list should contains the following books in the same order
-      | titre | auteur |
-      | L'avare | Molière |
-      | Les Misérables | Victor Hugo |
+Feature: Reserve a book
+
+  Scenario: the user reserves an available book
+    Given the user creates the book "Livre mehdi" written by "Lazaar"
+    When the user reserves the book "Livre mehdi" written by "Lazaar"
+    Then the response status should be 204
+    When the user retrieves all books
+    Then the response status should be 200
+    And the response should contain the book "Livre mehdi" written by "Lazaar" as unavailable
+
+  Scenario: the user cannot reserve the same book twice
+    Given the user creates the book "Livre mehdi" written by "Lazaar"
+    When the user reserves the book "Livre mehdi" written by "Lazaar"
+    Then the response status should be 204
+    When the user reserves the book "Livre mehdi" written by "Lazaar"
+    Then the response status should be 400
+    And the error message should be "Le livre est déjà réservé"
