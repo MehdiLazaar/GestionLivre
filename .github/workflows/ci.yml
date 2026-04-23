@@ -47,6 +47,9 @@ jobs:
       - name: Clean
         run: ./gradlew clean
 
+      - name: Detekt
+        run: ./gradlew detekt
+
       - name: Unit tests
         run: ./gradlew test
 
@@ -117,6 +120,3 @@ jobs:
         with:
           name: pitest-report
           path: build/reports/pitest/
-
-      - name: Detekt
-        run: ./gradlew detekt

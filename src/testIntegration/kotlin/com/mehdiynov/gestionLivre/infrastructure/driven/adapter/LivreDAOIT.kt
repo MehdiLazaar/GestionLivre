@@ -32,17 +32,17 @@ class LivreDAOIT : FunSpec() {
 
         test("save et findAll retournent les livres avec disponibilite") {
             livreDAO.save(Livre("Livre mehdi", "Lazaar", false))
-            livreDAO.save(Livre("DDD", "Eric Evans", true))
+            livreDAO.save(Livre("livreTitre", "Statham", true))
 
             val livres = livreDAO.findAll()
 
             livres shouldHaveSize 2
 
             val livreMehdi = livres.find { it.titre == "Livre mehdi" && it.auteur == "Lazaar" }
-            val ddd = livres.find { it.titre == "DDD" && it.auteur == "Eric Evans" }
+            val livreTitre = livres.find { it.titre == "livreTitre" && it.auteur == "Statham" }
 
             livreMehdi shouldBe Livre("Livre mehdi", "Lazaar", false)
-            ddd shouldBe Livre("DDD", "Eric Evans", true)
+            livreTitre shouldBe Livre("livreTitre", "Statham", true)
         }
 
         test("findByTitreAndAuteur retourne un livre") {

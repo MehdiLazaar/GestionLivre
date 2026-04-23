@@ -90,6 +90,7 @@ dependencies {
     testImplementation("io.kotest:kotest-property:5.9.1")
     testImplementation("io.kotest:kotest-runner-junit5:5.9.1")
     testImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")
+    testImplementation("io.kotest.extensions:kotest-extensions-pitest:1.2.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(module = "mockito-core")
     }
@@ -237,28 +238,17 @@ tasks.named<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
     }
 }
 
-configure<PitestPluginExtension> {
-    targetClasses.set(listOf("com.mehdiynov.gestionLivre.*"))
-}
-
 pitest {
-    junit5PluginVersion = "1.2.1"
+    junit5PluginVersion.set("1.2.1")
+    targetClasses.set(listOf("com.mehdiynov.gestionLivre.*"))
     threads.set(2)
     outputFormats.set(listOf("HTML"))
     timestampedReports.set(false)
-    targetClasses.set(listOf("com.mehdiynov.gestionLivre.*"))
-
-    excludedClasses.set(
-        listOf(
-            "*.Companion*",
-            "*.Configuration*",
-            "*.Config*",
-            "*.Application*",
-            "*.DTO*"
-        )
-    )
-
+    excludedClasses.set(listOf("*.Companion*", "*.Config*"))
+    excludedTestClasses.set(listOf("com.mehdiynov.gestionLivre.GestionLivreApplicationTests"))
     mutators.set(listOf("STRONGER"))
+    mainSourceSets.addAll(sourceSets.main.get())
+    testSourceSets.addAll(sourceSets.test.get())
 }
 
 detekt {

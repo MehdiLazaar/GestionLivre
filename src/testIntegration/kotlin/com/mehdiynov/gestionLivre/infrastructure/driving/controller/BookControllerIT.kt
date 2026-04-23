@@ -46,7 +46,7 @@ class BookControllerIT : FunSpec() {
         test("GET /books retourne la liste avec disponibilite") {
             every { listeLivreUsecase.execute() } returns listOf(
                 Livre("Livre mehdi", "Lazaar", false),
-                Livre("Domain-Driven Design", "Eric Evans", true)
+                Livre("Domain-Driven Design", "Statham", true)
             )
 
             mockMvc.get("/books") {
@@ -65,7 +65,7 @@ class BookControllerIT : FunSpec() {
                           },
                           {
                             "titre": "Domain-Driven Design",
-                            "auteur": "Eric Evans",
+                            "auteur": "Statham",
                             "disponible": false
                           }
                         ]
